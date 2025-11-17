@@ -13,7 +13,7 @@ SELECT name from tracks where composer LIKE '%AC/DC%'
 select t.name, t.composer, a.title from tracks AS t
 INNER JOIN albums AS a ON t.AlbumId=a.AlbumId 
 inner join artists AS ar ON a.ArtistId=ar.ArtistId
-
+WHERE ar.name='AC/DC'
 --ejercicio 4
 
 SELECT customerid, FirstName, LastName FROM customers WHERE country<>'USA'
@@ -32,7 +32,7 @@ SELECT DISTINCT billingcountry  from invoces
 SELECT count(*), state from customers WHERE country='USA' GROUP by state
 
 --ejercicio 8
-SELECT COUNT(*) trackid FROM invoices WHERE invoiceid=37
+SELECT COUNT(*) AS NumeroArticulos FROM invoice_items WHERE invoiceid=37
 
 --ejercicio 9
 SELECT COUNT(*) trackid FROM tracks WHERE composer='AC/DC'
@@ -61,13 +61,13 @@ SELECT name from tracks where name like 'You%'
 
 --SEGUNDA PARTE
 --ejercicio 1
-SELECT i.customerid, i.InvoiceId, i.InvoiceDate, c.FirstName, c.Country from invoices as i
-inner join customers as c on i.CustomerId=c.CustomerId where country='Brazil'
+SELECT i.customerid, i.InvoiceId, i.InvoiceDate, i.billingcountry, c.FirstName, c.lastname from customers c
+join invoices i on c.CustomerId=i.CustomerId where c.country='Brazil'
 
 --ejercicio 2
-SELECT i.invoiceid, i.customerid, i billingcountry, c.customerid, c.country, e.firstname, e.lastname, e.country from invoices as i
-INNER join customers as c on  i.billingcountry=c.country
-INNER JOIN employees as e on c.country=e.country
+SELECT e.FirstName || ' ' || e.LastName AS Agente, i.InvoiceId FROM employees e
+JOIN customers c ON e.EmployeeId = c.SupportRepId
+JOIN invoices i ON c.customerId = i.CustomerId;
 
 --ejerciocio 3
 SELECT c.customerid, c.State, e.firstname, e.lastname, e.country, e.Title from customers as c
@@ -76,5 +76,24 @@ LEFT JOIN employees ON c.SupportRepId=e.ReportsTo
 
 --ejercicio 4
 
- SELECT i.invoiceid, i.trackid FROM invoice_items as i
+ SELECT i.invoiceid, t.name as cancion, i.quantity, i.unitprice FROM invoice_items as i
 inner join tracks as t on i.TrackId=t.TrackId
+order by i.InvoiceId
+
+--ejercicio 5
+
+SELECT t.Name AS Cancion,
+       mt.Name AS Formato,
+       a.Title AS Album,
+       g.Name AS Genero
+FROM Tracks t
+JOIN Media_Types mt ON t.MediaTypeId = mt.MediaTypeId
+JOIN Albums a ON t.AlbumId = a.AlbumId
+JOIN Genres g ON t.GenreId = g.GenreId
+ORDER BY a.Title, t.Name
+
+--ejercicio 6
+
+SELECT playlistId, COUNT(TrackId) FROM playlist_track GROUP by playlistId
+
+--ejercicio 7
